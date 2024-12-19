@@ -1,6 +1,6 @@
 #[macro_use]
 extern crate rocket;
-use rocket::{fs::NamedFile, http::Status};
+use rocket::{ fs::NamedFile, http::Status };
 use futures::executor::block_on;
 use std::io::{ Read, Write };
 
@@ -43,9 +43,20 @@ fn preload_js() -> NamedFile {
     block_on(async { NamedFile::open("web/js/preload.js").await.unwrap() })
 }
 
+#[get("/404.js")]
+fn not_found_js() -> NamedFile {
+    block_on(async { NamedFile::open("web/js/404.js").await.unwrap() })
+}
+
 #[get("/favicon.ico")]
 fn favicon() -> Status {
     Status::NoContent
+}
+
+// register a 404 handler
+#[catch(404)]
+fn not_found() -> NamedFile {
+    block_on(async { NamedFile::open("web/404.html").await.unwrap() })
 }
 
 fn init_uptime() {
@@ -67,5 +78,6 @@ fn rocket() -> _ {
         .mount("/", routes![index, favicon])
         .mount("/api/", routes![uptime])
         .mount("/css", routes![index_css])
-        .mount("/js", routes![preload_js])
+        .mount("/js", routes![preload_js, not_found_js])
+        .register("/", catchers![not_found])
 }
