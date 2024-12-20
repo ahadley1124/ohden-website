@@ -10,6 +10,12 @@ function submit404() {
     xhr.open('POST', '/404', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(JSON.stringify({url: url}));
+    sleep(10);
     //redirect to the homepage
     window.location.href = '/';
+}
+
+function sleep(sec) {
+    var start = new Date().getTime();
+    while (new Date().getTime() < start + sec*1000);
 }
