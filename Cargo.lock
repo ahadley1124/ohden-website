@@ -664,6 +664,7 @@ name = "ohden-website"
 version = "0.1.0"
 dependencies = [
  "futures",
+ "lazy_static",
  "rocket",
 ]
 

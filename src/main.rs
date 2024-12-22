@@ -1,13 +1,23 @@
 #[macro_use]
 extern crate rocket;
 use rocket::{ fs::NamedFile, http::Status };
+#[macro_use]
+extern crate lazy_static;
 use futures::executor::block_on;
 use std::io::{ Read, Write };
+use std::collections::HashMap;
+use std::sync::Mutex;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 #[get("/")]
 fn index() -> NamedFile {
     // open the file in the thread and return it
     block_on(async { NamedFile::open("web/index.html").await.unwrap() })
+}
+
+#[get("/nets.html")]
+fn nets() -> NamedFile {
+    block_on(async { NamedFile::open("web/nets.html").await.unwrap() })
 }
 
 #[get("/uptime")]
@@ -36,6 +46,16 @@ fn uptime() -> String {
 #[get("/index.css")]
 fn index_css() -> NamedFile {
     block_on(async { NamedFile::open("web/css/index.css").await.unwrap() })
+}
+
+#[get("/header.css")]
+fn header_css() -> NamedFile {
+    block_on(async { NamedFile::open("web/css/header.css").await.unwrap() })
+}
+
+#[get("/nets.css")]
+fn nets_css() -> NamedFile {
+    block_on(async { NamedFile::open("web/css/nets.css").await.unwrap() })
 }
 
 #[get("/preload.js")]
@@ -73,11 +93,10 @@ fn init_uptime() {
 #[launch]
 fn rocket() -> _ {
     init_uptime();
-    rocket
-        ::build()
-        .mount("/", routes![index, favicon])
+    rocket::build()
+        .mount("/", routes![index, nets, favicon])
         .mount("/api/", routes![uptime])
-        .mount("/css", routes![index_css])
+        .mount("/css", routes![index_css, header_css, nets_css])
         .mount("/js", routes![preload_js, not_found_js])
         .register("/", catchers![not_found])
 }

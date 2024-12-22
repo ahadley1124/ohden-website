@@ -46,3 +46,20 @@
     bottom: 0;
     width: 100%;
 }
+
+.DistrictList {
+    display: flex;
+    flex-wrap: nowrap; /* Ensure items don't wrap to the next line */
+    justify-content: flex-start; /* Align items to the start */
+}
+
+.DistrictList ul {
+    flex: 1; /* Allow the ul to take up available space */
+}
+
+.DistrictMap {
+    flex: 1; /* Allow the map to take up available space */
+    margin-left: 1em; /* Add some space between the ul and the map */
+    display: flex;
+    align-items: stretch; /* Make the image as tall as the ul */
+}
